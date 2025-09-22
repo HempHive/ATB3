@@ -76,9 +76,15 @@
                 <div class="control-group">
                     <button id="data-management" class="btn btn-primary"><i class="fas fa-database"></i> Data Management</button>
                 </div>
+                <div class="control-group">
+                    <button id="market-selection-btn" class="btn btn-info"><i class="fas fa-search"></i> Market Selection</button>
+                </div>
+                <div class="control-group">
+                    <button id="live-trading-btn" class="btn btn-secondary"><i class="fas fa-coins"></i> Live Trading</button>
+                </div>
             </section>
-            <!-- Market Selection -->
-            <section class="market-selection">
+            <!-- Market Selection (moved to modal) -->
+            <section class="market-selection" style="display:none;">
                 <h3><i class="fas fa-search"></i> Market Selection</h3>
                 <div class="market-list">
                     <h4>Available Markets</h4>
@@ -157,8 +163,8 @@
                 </div>
             </section>
 
-            <!-- Market Selection Panel -->
-            <section class="market-selection-panel">
+            <!-- Market Selection Panel (moved to modal) -->
+            <section class="market-selection-panel" style="display:none;">
                 <h3><i class="fas fa-cog"></i> Market Selection</h3>
                 <div class="market-toggle-grid">
                     <div class="market-toggle-item">
@@ -176,8 +182,8 @@
                 </div>
             </section>
 
-            <!-- Bot Selector -->
-            <section class="bot-selector">
+            <!-- Bot Selector (moved to modal) -->
+            <section class="bot-selector" style="display:none;">
                 <h3><i class="fas fa-list"></i> Bot Selector</h3>
                 <select id="bot-selector" class="bot-dropdown">
                     <option value="">Select a Bot</option>
@@ -200,8 +206,8 @@
             <!-- Risk Controls -->
             <section class="risk-controls" style="display:none;"></section>
 
-            <!-- Live Trading Panel -->
-            <section class="live-trading-panel">
+            <!-- Live Trading Panel (moved to modal) -->
+            <section class="live-trading-panel" style="display:none;">
                 <h3><i class="fas fa-coins"></i> Live Trading</h3>
                 <div class="trading-mode">
                     <label class="mode-toggle">
@@ -388,6 +394,71 @@
                     <div id="download-progress-text">Progress: 0%</div>
                     <progress id="download-progress" value="0" max="100" style="width: 100%;"></progress>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Selection Modal -->
+    <div id="market-selection-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-search"></i> Market Selection</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="control-group">
+                    <input type="text" id="market-search-input" class="config-input" placeholder="Search markets (e.g., BTC-USD, AAPL, GC=F)">
+                    <button id="market-search-btn" class="btn btn-primary"><i class="fas fa-magnifying-glass"></i> Search</button>
+                </div>
+                <div id="market-search-results" class="market-items"></div>
+                <div class="market-selection-panel" style="margin-top: 12px; display:block;">
+                    <div class="market-toggle-grid">
+                        <div class="market-toggle-item">
+                            <input type="checkbox" id="modal-show-commodities" checked>
+                            <label for="modal-show-commodities">Commodities</label>
+                        </div>
+                        <div class="market-toggle-item">
+                            <input type="checkbox" id="modal-show-stocks" checked>
+                            <label for="modal-show-stocks">Stocks</label>
+                        </div>
+                        <div class="market-toggle-item">
+                            <input type="checkbox" id="modal-show-crypto" checked>
+                            <label for="modal-show-crypto">Crypto</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group" style="margin-top:12px;">
+                    <label for="modal-bot-selector">Bot Selector (optional)</label>
+                    <select id="modal-bot-selector" class="bot-dropdown">
+                        <option value="">Select a Bot</option>
+                        <option value="bot1">Stock Bot 1 (AAPL)</option>
+                        <option value="bot2">Stock Bot 2 (GOOGL)</option>
+                        <option value="bot3">Stock Bot 3 (MSFT)</option>
+                        <option value="bot4">Stock Bot 4 (TSLA)</option>
+                        <option value="bot5">Stock Bot 5 (AMZN)</option>
+                        <option value="bot6">Crypto Bot 1 (BTC)</option>
+                        <option value="bot7">Crypto Bot 2 (ETH)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Trading Modal -->
+    <div id="live-trading-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-coins"></i> Live Trading</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <section class="live-trading-panel" style="display:block;"></section>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary modal-close">Close</button>

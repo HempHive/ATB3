@@ -114,6 +114,10 @@ class ATBDashboard {
         // Data management
         const dataBtn = document.getElementById('data-management');
         if (dataBtn) dataBtn.addEventListener('click', () => this.showDataModal());
+        const marketSelBtn = document.getElementById('market-selection-btn');
+        if (marketSelBtn) marketSelBtn.addEventListener('click', () => this.showMarketSelectionModal());
+        const liveTradingBtn = document.getElementById('live-trading-btn');
+        if (liveTradingBtn) liveTradingBtn.addEventListener('click', () => this.showLiveTradingModal());
 
         const dlBtn = document.getElementById('download-data');
         if (dlBtn) dlBtn.addEventListener('click', () => this.requestDownloadData());
@@ -124,6 +128,9 @@ class ATBDashboard {
         if (dlBtn2) dlBtn2.addEventListener('click', () => this.requestDownloadData());
         const updBtn2 = document.getElementById('update-data2');
         if (updBtn2) updBtn2.addEventListener('click', () => this.requestUpdateData());
+
+        const marketSearchBtn = document.getElementById('market-search-btn');
+        if (marketSearchBtn) marketSearchBtn.addEventListener('click', () => this.searchMarketsModal());
 
         // Theme toggle
         const themeToggleEl = document.getElementById('theme-toggle');
@@ -465,6 +472,69 @@ class ATBDashboard {
         const modal = document.getElementById('data-modal');
         if (modal) modal.classList.add('show');
         this.pollBackendStatusOnce();
+    }
+
+    showMarketSelectionModal() {
+        const modal = document.getElementById('market-selection-modal');
+        if (modal) modal.classList.add('show');
+        try {
+            // sync bot selector options
+            const sel = document.getElementById('modal-bot-selector');
+            if (sel) {
+                sel.innerHTML = '<option value="">Select a Bot</option>';
+                Object.entries(this.bots).forEach(([id, b]) => {
+                    const opt = document.createElement('option');
+                    opt.value = id; opt.textContent = `${b.name} (${b.asset})`;
+                    sel.appendChild(opt);
+                });
+            }
+        } catch (e) {}
+    }
+
+    showLiveTradingModal() {
+        const modal = document.getElementById('live-trading-modal');
+        if (!modal) return;
+        // Clone existing panel into modal body
+        const src = document.querySelector('section.live-trading-panel');
+        const dst = modal.querySelector('.modal-body');
+        if (src && dst) {
+            dst.innerHTML = '';
+            const clone = src.cloneNode(true);
+            clone.style.display = 'block';
+            dst.appendChild(clone);
+        }
+        modal.classList.add('show');
+    }
+
+    async searchMarketsModal() {
+        const input = document.getElementById('market-search-input');
+        const term = (input && input.value || '').trim();
+        if (!term) return;
+        try {
+            const resp = await fetch('/api/markets/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ search_term: term }) });
+            const data = await resp.json();
+            const results = (data && data.results) || [];
+            const container = document.getElementById('market-search-results');
+            if (container) {
+                container.innerHTML = '';
+                results.forEach(r => {
+                    const el = document.createElement('div');
+                    el.className = 'market-item';
+                    el.innerHTML = `<span class="market-symbol">${r.symbol}</span><span class="market-name">${r.name}</span><span class="market-price">$${(r.price||0).toFixed(2)}</span>`;
+                    el.addEventListener('click', async () => {
+                        await fetch('/api/markets/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ market: r }) });
+                        this.addAlert('success', 'Market Added', `${r.name} added and bot created`);
+                        const modal = document.getElementById('market-selection-modal');
+                        if (modal) modal.classList.remove('show');
+                        // refresh header bots
+                        this.renderHeaderBots();
+                    });
+                    container.appendChild(el);
+                });
+            }
+        } catch (e) {
+            this.addAlert('danger', 'Search Failed', 'Could not search markets');
+        }
     }
 
     async showNautilusSettings() {
