@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATB - Auto Trading Bot Dashboard</title>
+    
+    <!-- Chart.js for market graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- QRCode JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;600;700&family=Lato:wght@300;400;700&family=Montserrat:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Inter:wght@300;400;600;700&family=Source+Sans+3:wght@300;400;600;700&family=Nunito:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&family=Merriweather:wght@300;400;700&family=Ubuntu:wght@300;400;700&family=Work+Sans:wght@300;400;600;700&family=Noto+Sans:wght@300;400;600;700&family=PT+Sans:wght@400;700&family=Oswald:wght@300;400;600;700&family=Rubik:wght@300;400;600;700&family=Quicksand:wght@300;400;600;700&family=Fira+Sans:wght@300;400;600;700&family=Mulish:wght@300;400;600;700&family=Karla:wght@300;400;600;700&family=Cabin:wght@400;600;700&family=Heebo:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="images/logo.png" alt="ATB Auto Trading Bot v3" class="logo-png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-text">
+                    <i class="fas fa-robot"></i>
+                    <h1>ATB Auto Trading Bot v3 🐶</h1>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div id="header-bots-container" class="header-bots"></div>
+                <div class="button-container" data-button-id="connection-status">
+                    <img src="images/atbd.png" alt="Nautilus" class="btn-png status-png" id="status-png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <button id="connection-status" class="btn btn-secondary btn-fallback" title="Connection Status">
+                        <span id="connection-indicator" class="status-indicator offline"></span>
+                        <span id="connection-text">❌</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <!-- Tools (moved from header) -->
+            <section class="sidebar-tools">
+                <h3><i class="fas fa-tools"></i> Tools</h3>
+                <div class="control-group">
+                    <button id="market-review" class="btn btn-info"><i class="fas fa-chart-bar"></i> Market Data</button>
+                </div>
+                <div class="control-group">
+                    <button id="strategy-editor" class="btn btn-secondary"><i class="fas fa-sliders-h"></i> Strategy Editor</button>
+                </div>
+                <div class="control-group">
+                    <button id="investment-panel" class="btn btn-secondary"><i class="fas fa-chart-pie"></i> Portfolio Investments</button>
+                </div>
+                <div class="control-group">
+                    <button id="digital-account" class="btn btn-secondary"><i class="fas fa-wallet"></i> Digital Account</button>
+                </div>
+                <div class="control-group">
+                    <button id="digital-bank" class="btn btn-secondary"><i class="fas fa-vault"></i> Digital Bank</button>
+                </div>
+                <div class="control-group">
+                    <button id="digital-currency" class="btn btn-secondary"><i class="fas fa-coins"></i> Digital Currency</button>
+                </div>
+                <div class="control-group">
+                    <button id="theme-customizer" class="btn btn-secondary"><i class="fas fa-palette"></i> GUI Customise</button>
+                </div>
+                <div class="control-group">
+                    <button id="theme-toggle" class="btn btn-secondary"><i class="fas fa-moon"></i> Theme</button>
+                </div>
+                <div class="control-group">
+                    <button id="data-management" class="btn btn-primary"><i class="fas fa-database"></i> Data Management</button>
+                </div>
+            </section>
+            <!-- Market Selection -->
+            <section class="market-selection">
+                <h3><i class="fas fa-search"></i> Market Selection</h3>
+                <div class="market-list">
+                    <h4>Available Markets</h4>
+                    <div class="market-categories">
+                        <div class="market-category">
+                            <h5>Commodities</h5>
+                            <div class="market-items">
+                                <div class="market-item" data-symbol="SI=F" data-name="Silver Futures">
+                                    <span class="market-symbol">SI=F</span>
+                                    <span class="market-name">Silver</span>
+                                    <span class="market-price" id="price-SI">$24.50</span>
+                                </div>
+                                <div class="market-item" data-symbol="GC=F" data-name="Gold Futures">
+                                    <span class="market-symbol">GC=F</span>
+                                    <span class="market-name">Gold</span>
+                                    <span class="market-price" id="price-GC">$1,950.00</span>
+                                </div>
+                                <div class="market-item" data-symbol="CL=F" data-name="Crude Oil Futures">
+                                    <span class="market-symbol">CL=F</span>
+                                    <span class="market-name">Oil</span>
+                                    <span class="market-price" id="price-CL">$75.30</span>
+                                </div>
+                                <div class="market-item" data-symbol="HG=F" data-name="Copper Futures">
+                                    <span class="market-symbol">HG=F</span>
+                                    <span class="market-name">Copper</span>
+                                    <span class="market-price" id="price-HG">$3.85</span>
+                                </div>
+                                <div class="market-item" data-symbol="PL=F" data-name="Platinum Futures">
+                                    <span class="market-symbol">PL=F</span>
+                                    <span class="market-name">Platinum</span>
+                                    <span class="market-price" id="price-PL">$950.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="market-category">
+                            <h5>Stocks</h5>
+                            <div class="market-items">
+                                <div class="market-item" data-symbol="AAPL" data-name="Apple Inc.">
+                                    <span class="market-symbol">AAPL</span>
+                                    <span class="market-name">Apple</span>
+                                    <span class="market-price" id="price-AAPL">$150.00</span>
+                                </div>
+                                <div class="market-item" data-symbol="GOOGL" data-name="Alphabet Inc.">
+                                    <span class="market-symbol">GOOGL</span>
+                                    <span class="market-name">Google</span>
+                                    <span class="market-price" id="price-GOOGL">$2,800.00</span>
+                                </div>
+                                <div class="market-item" data-symbol="MSFT" data-name="Microsoft Corporation">
+                                    <span class="market-symbol">MSFT</span>
+                                    <span class="market-name">Microsoft</span>
+                                    <span class="market-price" id="price-MSFT">$300.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="market-category">
+                            <h5>Crypto</h5>
+                            <div class="market-items">
+                                <div class="market-item" data-symbol="BTC-USD" data-name="Bitcoin">
+                                    <span class="market-symbol">BTC</span>
+                                    <span class="market-name">Bitcoin</span>
+                                    <span class="market-price" id="price-BTC">$45,000.00</span>
+                                </div>
+                                <div class="market-item" data-symbol="ETH-USD" data-name="Ethereum">
+                                    <span class="market-symbol">ETH</span>
+                                    <span class="market-name">Ethereum</span>
+                                    <span class="market-price" id="price-ETH">$3,000.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="market-actions">
+                    <button id="create-bot" class="btn btn-success" disabled>
+                        <i class="fas fa-robot"></i> Create Bot
+                    </button>
+                </div>
+            </section>
+
+            <!-- Market Selection Panel -->
+            <section class="market-selection-panel">
+                <h3><i class="fas fa-cog"></i> Market Selection</h3>
+                <div class="market-toggle-grid">
+                    <div class="market-toggle-item">
+                        <input type="checkbox" id="show-commodities" checked>
+                        <label for="show-commodities">Commodities</label>
+                    </div>
+                    <div class="market-toggle-item">
+                        <input type="checkbox" id="show-stocks" checked>
+                        <label for="show-stocks">Stocks</label>
+                    </div>
+                    <div class="market-toggle-item">
+                        <input type="checkbox" id="show-crypto" checked>
+                        <label for="show-crypto">Crypto</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bot Selector -->
+            <section class="bot-selector">
+                <h3><i class="fas fa-list"></i> Bot Selector</h3>
+                <select id="bot-selector" class="bot-dropdown">
+                    <option value="">Select a Bot</option>
+                    <option value="bot1">Stock Bot 1 (AAPL)</option>
+                    <option value="bot2">Stock Bot 2 (GOOGL)</option>
+                    <option value="bot3">Stock Bot 3 (MSFT)</option>
+                    <option value="bot4">Stock Bot 4 (TSLA)</option>
+                    <option value="bot5">Stock Bot 5 (AMZN)</option>
+                    <option value="bot6">Crypto Bot 1 (BTC)</option>
+                    <option value="bot7">Crypto Bot 2 (ETH)</option>
+                </select>
+            </section>
+
+
+            <!-- Bot Management Panel moved to dashboard -->
+
+            <!-- Bot Configuration -->
+            <section class="bot-config" id="bot-config" style="display:none;"></section>
+
+            <!-- Risk Controls -->
+            <section class="risk-controls" style="display:none;"></section>
+
+            <!-- Live Trading Panel -->
+            <section class="live-trading-panel">
+                <h3><i class="fas fa-coins"></i> Live Trading</h3>
+                <div class="trading-mode">
+                    <label class="mode-toggle">
+                        <input type="radio" name="trading-mode" value="simulation" checked>
+                        <span class="mode-label">Simulation</span>
+                    </label>
+                    <label class="mode-toggle">
+                        <input type="radio" name="trading-mode" value="live">
+                        <span class="mode-label">Live Trading</span>
+                    </label>
+                </div>
+                <div class="account-info" id="account-info">
+                    <div class="account-balance">
+                        <label>Account Balance:</label>
+                        <span id="account-balance">$100,000.00</span>
+                    </div>
+                    <div class="available-funds">
+                        <label>Available Funds:</label>
+                        <span id="available-funds">$95,000.00</span>
+                    </div>
+                    <div class="account-actions">
+                        <button id="disconnect-broker" class="btn btn-danger">Disconnect</button>
+                    </div>
+                </div>
+                <div class="broker-login" id="broker-login" style="display: none;">
+                    <h4>Broker Connection</h4>
+                    <select id="broker-selector" class="config-input">
+                        <option value="">Select Broker</option>
+                        <option value="alpaca">Alpaca</option>
+                        <option value="interactive_brokers">Interactive Brokers</option>
+                        <option value="td_ameritrade">TD Ameritrade</option>
+                        <option value="robinhood">Robinhood</option>
+                    </select>
+                    <input type="text" id="api-key" class="config-input" placeholder="API Key">
+                    <input type="password" id="api-secret" class="config-input" placeholder="API Secret">
+                    <button id="connect-broker" class="btn btn-primary">Connect</button>
+                </div>
+            </section>
+
+            <!-- Bot Controls -->
+            <section class="bot-controls">
+                <h3><i class="fas fa-play-circle"></i> Bot Controls</h3>
+                <div class="control-buttons">
+                    <button id="start-bot" class="btn btn-success">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button id="pause-bot" class="btn btn-warning">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button id="reset-bot" class="btn btn-danger">
+                        <i class="fas fa-stop"></i> Reset
+                    </button>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Market Graph Section -->
+            <section class="market-graph">
+                <div class="section-header">
+                    <div class="graph-title">
+                        <h2><i class="fas fa-chart-line"></i> Market Graph</h2>
+                        <div class="current-market" id="current-market">
+                            <span class="market-label">Selected:</span>
+                            <span class="market-display" id="market-display">Select a market or bot to view</span>
+                        </div>
+                    </div>
+                    <div class="graph-controls">
+                        <div class="zoom-controls">
+                            <label for="zoom-slider">Time Zoom:</label>
+                            <input type="range" id="zoom-slider" min="0.1" max="5" step="0.1" value="1" class="zoom-slider">
+                            <span id="zoom-value">100%</span>
+                        </div>
+                        <select id="timeframe-selector" class="timeframe-selector">
+                            <option value="1m">1 Minute</option>
+                            <option value="5m">5 Minutes</option>
+                            <option value="15m">15 Minutes</option>
+                            <option value="1h" selected>1 Hour</option>
+                            <option value="4h">4 Hours</option>
+                            <option value="1d">1 Day</option>
+                            <option value="1w">1 Week</option>
+                            <option value="1M">1 Month</option>
+                            <option value="3M">3 Months</option>
+                            <option value="6M">6 Months</option>
+                            <option value="1y">1 Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-loading" id="chart-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading market data...</p>
+                    </div>
+                    <div id="data-provenance" class="data-badge" style="display: none;">Simulated data</div>
+                    <canvas id="market-chart"></canvas>
+                </div>
+            </section>
+
+            <!-- Bot Management now shown as floating modal -->
+
+
+            <!-- Live Stats -->
+            <section class="live-stats">
+                <h3><i class="fas fa-chart-bar"></i> Live Profit/Loss Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total P&L</div>
+                        <div class="stat-value" id="total-pnl">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Today's P&L</div>
+                        <div class="stat-value" id="daily-pnl">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Positions</div>
+                        <div class="stat-value" id="active-positions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Win Rate</div>
+                        <div class="stat-value" id="win-rate">0%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alerts & Notifications -->
+            <section class="alerts-section">
+                <h3><i class="fas fa-bell"></i> Alerts & Notifications</h3>
+                <div class="alerts-container" id="alerts-container">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <span>ATB v3.0</span>
+                <span>•</span>
+                <span id="last-update">Update: --</span>
+            </div>
+            <div class="footer-ticker">
+                <div class="ticker-container">
+                    <div class="ticker-scroll" id="ticker-scroll">
+                        <!-- Ticker items will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="footer-actions">
+                <button id="export-data" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <button id="sim-mode" class="btn btn-info">
+                    <i class="fas fa-flask"></i> Simulation Mode
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Data Management Modal -->
+    <div id="data-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-database"></i> Data Management</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Manage Nautilus Trader market data model.</p>
+                <div class="control-group">
+                    <button id="download-data" class="btn btn-primary"><i class="fas fa-download"></i> Download Model (~10GB)</button>
+                    <button id="update-data" class="btn btn-info"><i class="fas fa-sync"></i> Update Model</button>
+                </div>
+                <div class="control-group">
+                    <div id="download-progress-text">Progress: 0%</div>
+                    <progress id="download-progress" value="0" max="100" style="width: 100%;"></progress>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nautilus Settings Modal -->
+    <div id="nautilus-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Nautilus Settings</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="nautilus-info" class="portfolio-stats"></div>
+                <div class="control-group">
+                    <button id="download-data2" class="btn btn-primary"><i class="fas fa-download"></i> Download Model</button>
+                    <button id="update-data2" class="btn btn-info"><i class="fas fa-sync"></i> Update Model</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Market Review Modal -->
+    <div id="market-review-modal" class="modal">
+        <div class="modal-content market-review-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Daily Market Review</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="review-controls">
+                    <div class="time-scale-controls">
+                        <label for="review-time-scale">Time Scale:</label>
+                        <select id="review-time-scale" class="config-input">
+                            <option value="1h">Last Hour</option>
+                            <option value="1d" selected>Today</option>
+                            <option value="1w">This Week</option>
+                            <option value="1M">This Month</option>
+                            <option value="3M">Last 3 Months</option>
+                            <option value="6M">Last 6 Months</option>
+                            <option value="1y">This Year</option>
+                        </select>
+                    </div>
+                    <div class="market-filter-controls">
+                        <label for="review-market-filter">Filter Market:</label>
+                        <select id="review-market-filter" class="config-input">
+                            <option value="all" selected>All Markets</option>
+                            <option value="SI=F">Silver (SI=F)</option>
+                            <option value="GC=F">Gold (GC=F)</option>
+                            <option value="CL=F">Oil (CL=F)</option>
+                            <option value="AAPL">Apple (AAPL)</option>
+                            <option value="GOOGL">Google (GOOGL)</option>
+                            <option value="MSFT">Microsoft (MSFT)</option>
+                            <option value="BTC-USD">Bitcoin (BTC)</option>
+                            <option value="ETH-USD">Ethereum (ETH)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="market-review-summary">
+                    <h4>Market Summary - <span id="review-date"></span></h4>
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Markets</div>
+                            <div class="stat-value" id="total-markets">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Biggest Gainer</div>
+                            <div class="stat-value positive" id="biggest-gainer">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Biggest Loser</div>
+                            <div class="stat-value negative" id="biggest-loser">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Most Volatile</div>
+                            <div class="stat-value" id="most-volatile">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="active-bots-review">
+                    <h4>Active Bots</h4>
+                    <div id="review-active-bots" class="active-bots-container"></div>
+                </div>
+
+                <div class="bot-activity-charts" id="bot-activity-charts"></div>
+                <div class="modal-footer" style="justify-content: flex-start;">
+                    <button id="print-bot-report" class="btn btn-primary"><i class="fas fa-print"></i> Print Report</button>
+                </div>
+
+                <div class="dramatic-shifts">
+                    <h4>Dramatic Market Shifts</h4>
+                    <div class="shifts-list" id="shifts-list">
+                        <!-- Dramatic shifts will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="market-performance">
+                    <h4>Market Performance</h4>
+                    <div class="performance-chart">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="generate-pdf" class="btn btn-primary">
+                    <i class="fas fa-file-pdf"></i> Generate PDF Report
+                </button>
+                <button id="export-review-data" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investment Panel Modal -->
+    <div id="investment-modal" class="modal">
+        <div class="modal-content investment-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-pie"></i> Investment Portfolio</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="investment-categories">
+                    <div class="investment-category">
+                        <h4><i class="fas fa-building"></i> Real Estate (REITs)</h4>
+                        <div class="investment-options">
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Residential REITs</h5>
+                                    <p>Invest in residential real estate through REITs</p>
+                                    <span class="option-price">Starting at $1,000</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="reit" data-category="residential">
+                                    <i class="fas fa-home"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Commercial REITs</h5>
+                                    <p>Office buildings, retail spaces, and warehouses</p>
+                                    <span class="option-price">Starting at $2,500</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="reit" data-category="commercial">
+                                    <i class="fas fa-building"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Industrial REITs</h5>
+                                    <p>Manufacturing facilities and logistics centers</p>
+                                    <span class="option-price">Starting at $5,000</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="reit" data-category="industrial">
+                                    <i class="fas fa-industry"></i> Invest
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="investment-category">
+                        <h4><i class="fas fa-palette"></i> Art & NFTs</h4>
+                        <div class="investment-options">
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Digital Art NFTs</h5>
+                                    <p>Invest in digital art and collectible NFTs</p>
+                                    <span class="option-price">Starting at $100</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="nft" data-category="digital-art">
+                                    <i class="fas fa-palette"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Gaming NFTs</h5>
+                                    <p>In-game assets and virtual real estate</p>
+                                    <span class="option-price">Starting at $50</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="nft" data-category="gaming">
+                                    <i class="fas fa-gamepad"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Music NFTs</h5>
+                                    <p>Exclusive music tracks and artist royalties</p>
+                                    <span class="option-price">Starting at $200</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="nft" data-category="music">
+                                    <i class="fas fa-music"></i> Invest
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="investment-category">
+                        <h4><i class="fas fa-dna"></i> Biotech Tokens</h4>
+                        <div class="investment-options">
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Pharmaceutical Research</h5>
+                                    <p>Invest in drug development and medical research</p>
+                                    <span class="option-price">Starting at $10,000</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="biotech" data-category="pharma">
+                                    <i class="fas fa-pills"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Gene Therapy</h5>
+                                    <p>Cutting-edge gene editing and therapy research</p>
+                                    <span class="option-price">Starting at $15,000</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="biotech" data-category="gene-therapy">
+                                    <i class="fas fa-dna"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Medical Devices</h5>
+                                    <p>Innovative medical technology and devices</p>
+                                    <span class="option-price">Starting at $7,500</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="biotech" data-category="devices">
+                                    <i class="fas fa-stethoscope"></i> Invest
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="investment-category">
+                        <h4><i class="fas fa-gem"></i> Physical Precious Metals</h4>
+                        <div class="investment-options">
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Gold Bullion</h5>
+                                    <p>Invest in physical gold bars and coins</p>
+                                    <span class="option-price">Starting at $1,500</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="metals" data-category="gold">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Silver Bullion</h5>
+                                    <p>Physical silver bars, coins, and rounds</p>
+                                    <span class="option-price">Starting at $500</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="metals" data-category="silver">
+                                    <i class="fas fa-coins"></i> Invest
+                                </button>
+                            </div>
+                            <div class="investment-option">
+                                <div class="option-info">
+                                    <h5>Platinum & Palladium</h5>
+                                    <p>Rare precious metals for diversification</p>
+                                    <span class="option-price">Starting at $2,000</span>
+                                </div>
+                                <button class="btn btn-primary invest-btn" data-type="metals" data-category="platinum">
+                                    <i class="fas fa-gem"></i> Invest
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-summary">
+                    <h4>Portfolio Summary</h4>
+                    <div class="portfolio-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Invested:</span>
+                            <span class="stat-value" id="total-invested">$0.00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Current Value:</span>
+                            <span class="stat-value" id="current-value">$0.00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Return:</span>
+                            <span class="stat-value" id="total-return">0.00%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="view-portfolio" class="btn btn-secondary">View Portfolio</button>
+                <button id="export-investments" class="btn btn-info">Export Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Customization Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content theme-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-palette"></i> Theme Customization</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="theme-presets">
+                    <h4>Preset Themes</h4>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-theme="black-gold">Black & Gold</button>
+                        <button class="preset-btn" data-theme="sunrise">Sunrise</button>
+                        <button class="preset-btn" data-theme="neon">Neon</button>
+                        <button class="preset-btn" data-theme="purple-dark">Purple Dark</button>
+                        <button class="preset-btn" data-theme="red-dark">Red Dark</button>
+                        <button class="preset-btn" data-theme="ocean">Ocean</button>
+                        <button class="preset-btn" data-theme="sunset">Sunset</button>
+                        <button class="preset-btn" data-theme="forest">Forest</button>
+                    </div>
+                </div>
+                <div class="color-customization">
+                    <h4>Custom Colors</h4>
+                    <div class="color-grid">
+                        <div class="color-item">
+                            <label>Primary Background:</label>
+                            <input type="color" id="bg-primary" value="#0a0a0a">
+                        </div>
+                        <div class="color-item">
+                            <label>Secondary Background:</label>
+                            <input type="color" id="bg-secondary" value="#1a1a1a">
+                        </div>
+                        <div class="color-item">
+                            <label>Accent Color:</label>
+                            <input type="color" id="accent-color" value="#ffd700">
+                        </div>
+                        <div class="color-item">
+                            <label>Text Primary:</label>
+                            <input type="color" id="text-primary" value="#ffffff">
+                        </div>
+                        <div class="color-item">
+                            <label>Success Color:</label>
+                            <input type="color" id="success-color" value="#28a745">
+                        </div>
+                        <div class="color-item">
+                            <label>Warning Color:</label>
+                            <input type="color" id="warning-color" value="#ffc107">
+                        </div>
+                        <div class="color-item">
+                            <label>Danger Color:</label>
+                            <input type="color" id="danger-color" value="#dc3545">
+                        </div>
+                        <div class="color-item">
+                            <label>Info Color:</label>
+                            <input type="color" id="info-color" value="#17a2b8">
+                        </div>
+                        <div class="color-item">
+                            <label>Font Family:</label>
+                            <select id="font-family-selector" class="config-input">
+                                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                                <option value="'Open Sans', sans-serif">Open Sans</option>
+                                <option value="'Lato', sans-serif">Lato</option>
+                                <option value="'Montserrat', sans-serif">Montserrat</option>
+                                <option value="'Poppins', sans-serif">Poppins</option>
+                                <option value="'Inter', sans-serif">Inter</option>
+                                <option value="'Source Sans 3', sans-serif">Source Sans 3</option>
+                                <option value="'Nunito', sans-serif">Nunito</option>
+                                <option value="'Raleway', sans-serif">Raleway</option>
+                                <option value="'Merriweather', serif">Merriweather</option>
+                                <option value="'Ubuntu', sans-serif">Ubuntu</option>
+                                <option value="'Work Sans', sans-serif">Work Sans</option>
+                                <option value="'Noto Sans', sans-serif">Noto Sans</option>
+                                <option value="'PT Sans', sans-serif">PT Sans</option>
+                                <option value="'Oswald', sans-serif">Oswald</option>
+                                <option value="'Rubik', sans-serif">Rubik</option>
+                                <option value="'Quicksand', sans-serif">Quicksand</option>
+                                <option value="'Fira Sans', sans-serif">Fira Sans</option>
+                                <option value="'Mulish', sans-serif">Mulish</option>
+                                <option value="'Karla', sans-serif">Karla</option>
+                                <option value="'Cabin', sans-serif">Cabin</option>
+                                <option value="'Heebo', sans-serif">Heebo</option>
+                            </select>
+                        </div>
+                        <div class="color-item">
+                            <label>Graph Color:</label>
+                            <input type="color" id="graph-color" value="#ffd700" class="color-picker">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="reset-theme" class="btn btn-secondary">Reset</button>
+                <button id="apply-theme" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal Disclaimer & About Modal -->
+    <div id="legal-modal" class="modal">
+        <div class="modal-content legal-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-gavel"></i> Legal Disclaimer & About</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="legal-section">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Legal Disclaimer</h4>
+                    <p><strong>Educational Use Only:</strong> This software is provided for educational and research purposes only. It is not intended for actual trading or investment activities.</p>
+                    
+                    <p><strong>No Financial Advice:</strong> Nothing in this software constitutes financial, investment, or trading advice. All trading decisions should be made based on your own research and risk assessment.</p>
+                    
+                    <p><strong>Use at Your Own Risk:</strong> The developers and contributors of this software are not responsible for any financial losses, damages, or consequences resulting from the use of this software.</p>
+                    
+                    <p><strong>No Warranty:</strong> This software is provided "as is" without any warranty, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+                </div>
+                
+                <div class="about-section">
+                    <h4><i class="fas fa-info-circle"></i> About ATB Auto Trading Bot</h4>
+                    <p><strong>Version:</strong> 3.0</p>
+                    <p><strong>Purpose:</strong> Educational trading bot simulation platform for learning algorithmic trading concepts, backtesting strategies, and understanding market dynamics.</p>
+                    
+                    <p><strong>Features:</strong></p>
+                    <ul>
+                        <li>Paper trading simulation</li>
+                        <li>Multiple trading strategies</li>
+                        <li>Real-time market data visualization</li>
+                        <li>Backtesting capabilities</li>
+                        <li>Risk management tools</li>
+                        <li>Portfolio tracking</li>
+                    </ul>
+                    
+                    <p><strong>Documentation:</strong> Please refer to the README.md file for detailed usage instructions, setup guide, and feature documentation.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="legal-close" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="alert-title">Alert</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="alert-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="alert-ok" class="btn btn-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Management Modal -->
+    <div id="bot-management-modal" class="modal">
+        <div class="modal-content bot-management-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cogs"></i> Bot Management</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="bot-settings">
+                    <div class="setting-group">
+                        <label for="bot-name">Bot Name:</label>
+                        <input type="text" id="bot-name" class="config-input" placeholder="Enter bot name">
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-asset">Asset:</label>
+                        <input type="text" id="bot-asset" class="config-input" placeholder="e.g., AAPL, BTC-USD">
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-strategy">Strategy:</label>
+                        <select id="bot-strategy" class="config-input">
+                            <option value="ma">Moving Average</option>
+                            <option value="rsi">RSI</option>
+                            <option value="macd">MACD</option>
+                            <option value="bollinger">Bollinger Bands</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-frequency">Frequency:</label>
+                        <select id="bot-frequency" class="config-input">
+                            <option value="realtime">Real-time</option>
+                            <option value="1m">1 Minute</option>
+                            <option value="5m">5 Minutes</option>
+                            <option value="15m">15 Minutes</option>
+                            <option value="1h">1 Hour</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-risk">Risk Level:</label>
+                        <select id="bot-risk" class="config-input">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-floor-price">Floor Price:</label>
+                        <input type="number" id="bot-floor-price" class="config-input" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-daily-limit">Daily Loss Limit:</label>
+                        <input type="number" id="bot-daily-limit" class="config-input" placeholder="1000" step="10">
+                    </div>
+                    <div class="setting-group">
+                        <label for="bot-max-positions">Max Positions:</label>
+                        <input type="number" id="bot-max-positions" class="config-input" placeholder="10" step="1">
+                    </div>
+                </div>
+                <div class="bot-controls mt-md">
+                    <button id="modal-start-bot" class="btn btn-success"><i class="fas fa-play"></i> Start</button>
+                    <button id="modal-pause-bot" class="btn btn-warning"><i class="fas fa-pause"></i> Pause</button>
+                    <button id="modal-reset-bot" class="btn btn-danger"><i class="fas fa-stop"></i> Reset</button>
+                </div>
+                <div class="market-graph bot-modal-graph">
+                    <div class="section-header">
+                        <div class="graph-title">
+                            <h2><i class="fas fa-chart-line"></i> Bot Market Activity</h2>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="bot-management-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="create-new-bot" class="btn btn-success"><i class="fas fa-plus"></i> Create Bot</button>
+                <button id="save-bot-settings" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                <button id="delete-bot" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Account Modal -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content theme-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-wallet"></i> Digital Account</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="account-summary">
+                    <div class="account-info">
+                        <div class="account-balance"><label>Account Balance:</label> <span id="account-balance-main">$0.00</span></div>
+                        <div class="available-funds"><label>Available:</label> <span id="available-funds-main">$0.00</span></div>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    <div class="config-group">
+                        <label for="deposit-amount">Deposit Amount:</label>
+                        <input type="number" id="deposit-amount" class="config-input" placeholder="100.00" step="0.01">
+                        <button id="deposit-funds" class="btn btn-primary">Deposit</button>
+                    </div>
+                    <div class="config-group">
+                        <label for="transfer-bot">Transfer to Bot:</label>
+                        <select id="transfer-bot" class="config-input"></select>
+                        <input type="number" id="transfer-amount" class="config-input" placeholder="50.00" step="0.01">
+                        <button id="transfer-to-bot" class="btn btn-success">Transfer to Bot</button>
+                        <button id="withdraw-from-bot" class="btn btn-danger">Withdraw from Bot</button>
+                    </div>
+                </div>
+                <div class="account-allocations">
+                    <h4>Bot Allocations</h4>
+                    <div id="bot-allocations-list" class="portfolio-stats"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Bank Modal -->
+    <div id="bank-modal" class="modal">
+        <div class="modal-content investment-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-vault"></i> Digital Bank</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="config-group">
+                    <label for="bank-asset-name">Asset Name</label>
+                    <input type="text" id="bank-asset-name" class="config-input" placeholder="e.g., Crypto-currency">
+                </div>
+                <div class="config-group">
+                    <label for="bank-asset-ref">Reference</label>
+                    <input type="text" id="bank-asset-ref" class="config-input" placeholder="e.g., REF-001">
+                </div>
+                <div class="config-group">
+                    <label for="bank-asset-qty">Quantity</label>
+                    <input type="number" id="bank-asset-qty" class="config-input" placeholder="1" step="1">
+                </div>
+                <div class="config-group">
+                    <label for="bank-asset-value">Current Value ($)</label>
+                    <input type="number" id="bank-asset-value" class="config-input" placeholder="1000.00" step="0.01">
+                </div>
+                <div class="bot-actions">
+                    <button id="bank-add-asset" class="btn btn-success"><i class="fas fa-plus"></i> Add</button>
+                    <button id="bank-update-asset" class="btn btn-primary"><i class="fas fa-save"></i> Update</button>
+                    <button id="bank-delete-asset" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                    <button id="bank-export-csv" class="btn btn-secondary"><i class="fas fa-file-csv"></i> Export CSV</button>
+                </div>
+                <div class="portfolio-summary">
+                    <h4>Stored Assets</h4>
+                    <div id="bank-assets-list" class="portfolio-stats"></div>
+                    <div id="bank-qr-canvas-container" class="hidden"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Currency Modal -->
+    <div id="currency-modal" class="modal">
+        <div class="modal-content investment-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-coins"></i> Digital Currencies</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="top-cryptos" class="portfolio-stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Strategy Editor Modal -->
+    <div id="strategy-editor-modal" class="modal">
+        <div class="modal-content strategy-editor-modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-sliders-h"></i> Strategy Editor</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="strategy-settings">
+                    <div class="config-group">
+                        <label for="strategy-type">Strategy:</label>
+                        <select id="strategy-type" class="config-input">
+                            <option value="ma">Moving Average Crossover</option>
+                            <option value="rsi">RSI Threshold</option>
+                            <option value="macd">MACD</option>
+                            <option value="bollinger">Bollinger Bands</option>
+                        </select>
+                    </div>
+                    <div class="config-group">
+                        <label for="param1">Param 1:</label>
+                        <input type="number" id="param1" class="config-input" placeholder="Short MA / RSI / etc" value="14">
+                    </div>
+                    <div class="config-group">
+                        <label for="param2">Param 2:</label>
+                        <input type="number" id="param2" class="config-input" placeholder="Long MA / MACD slow" value="28">
+                    </div>
+                    <div class="config-group">
+                        <label for="param3">Param 3:</label>
+                        <input type="number" id="param3" class="config-input" placeholder="Threshold / bands" value="70">
+                    </div>
+                    <div class="bot-actions">
+                        <button id="run-backtest" class="btn btn-primary"><i class="fas fa-play"></i> Run Backtest</button>
+                    </div>
+                </div>
+                <div class="backtest-results mt-md" style="display: none;">
+                    <h4>Backtest Results</h4>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="backtest-chart"></canvas>
+                    </div>
+                    <div class="backtest-stats mt-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+    
+    <!-- Test Harness (for development/testing) -->
+    <script type="module" src="src/test-harness.ts"></script>
+    <script>
+        // Handle PNG button replacement and fallback
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle logo PNG
+            const logoPng = document.querySelector('.logo-png');
+            const logoText = document.querySelector('.logo-text');
+            
+            if (logoPng && logoText) {
+                // Handle logo PNG load success
+                logoPng.addEventListener('load', function() {
+                    // Hide logo text when PNG loads successfully
+                    logoText.style.display = 'none';
+                    logoPng.style.display = 'block';
+                });
+                
+                // Handle logo PNG load error
+                logoPng.addEventListener('error', function() {
+                    // Show logo text when PNG fails to load
+                    this.style.display = 'none';
+                    logoText.style.display = 'flex';
+                });
+                
+                // Check if logo image is already loaded
+                if (logoPng.complete && logoPng.naturalHeight !== 0) {
+                    // Logo PNG loaded successfully
+                    logoText.style.display = 'none';
+                    logoPng.style.display = 'block';
+                } else if (logoPng.complete) {
+                    // Logo PNG failed to load
+                    logoPng.style.display = 'none';
+                    logoText.style.display = 'flex';
+                }
+            }
+            
+            // Handle status PNG
+            const statusPng = document.querySelector('.status-png');
+            const statusFallback = document.querySelector('.status-fallback');
+            const connectionText = document.querySelector('#connection-text');
+            
+            if (statusPng && statusFallback && connectionText) {
+                // Handle status PNG load success
+                statusPng.addEventListener('load', function() {
+                    // Hide status fallback when PNG loads successfully
+                    statusFallback.style.display = 'none';
+                    statusPng.style.display = 'block';
+                });
+                
+                // Handle status PNG load error
+                statusPng.addEventListener('error', function() {
+                    // Show status fallback when PNG fails to load
+                    this.style.display = 'none';
+                    statusFallback.style.display = 'flex';
+                });
+                
+                // Check if status image is already loaded
+                if (statusPng.complete && statusPng.naturalHeight !== 0) {
+                    // Status PNG loaded successfully
+                    statusFallback.style.display = 'none';
+                    statusPng.style.display = 'block';
+                } else if (statusPng.complete) {
+                    // Status PNG failed to load
+                    statusPng.style.display = 'none';
+                    statusFallback.style.display = 'flex';
+                }
+                
+                // Function to update status
+                function updateStatus(isOnline) {
+                    const statusPng = document.getElementById('status-png');
+                    const connectionText = document.getElementById('connection-text');
+                    const statusIndicator = document.getElementById('connection-indicator');
+                    
+                    if (statusPng) {
+                        // Always try to update the PNG source first
+                        statusPng.src = isOnline ? 'images/online.png' : 'images/offline.png';
+                        statusPng.alt = isOnline ? 'Online' : 'Offline';
+                        
+                        // Add load event listener to show PNG when it loads
+                        statusPng.onload = function() {
+                            this.style.display = 'block';
+                            const fallback = document.getElementById('connection-status');
+                            if (fallback) fallback.style.display = 'none';
+                        };
+                        
+                        // Add error event listener to show fallback when PNG fails
+                        statusPng.onerror = function() {
+                            this.style.display = 'none';
+                            const fallback = document.getElementById('connection-status');
+                            if (fallback) fallback.style.display = 'flex';
+                        };
+                    }
+                    
+                    // Always update the fallback as well (in case PNG fails)
+                    if (connectionText) {
+                        connectionText.textContent = isOnline ? '💚' : '❌';
+                    }
+                    if (statusIndicator) {
+                        statusIndicator.className = isOnline ? 'status-indicator online' : 'status-indicator offline';
+                    }
+                }
+                
+                // Expose updateStatus function globally for use by other scripts
+                window.updateConnectionStatus = updateStatus;
+            } else {
+                // Create a fallback function even if elements don't exist
+                window.updateConnectionStatus = function(isOnline) {
+                    const statusPng = document.getElementById('status-png');
+                    const connectionText = document.getElementById('connection-text');
+                    const statusIndicator = document.getElementById('connection-indicator');
+                    
+                    if (statusPng) {
+                        // Always try to update the PNG source first
+                        statusPng.src = isOnline ? 'images/online.png' : 'images/offline.png';
+                        statusPng.alt = isOnline ? 'Online' : 'Offline';
+                        
+                        // Add load event listener to show PNG when it loads
+                        statusPng.onload = function() {
+                            this.style.display = 'block';
+                            const fallback = document.getElementById('connection-status');
+                            if (fallback) fallback.style.display = 'none';
+                        };
+                        
+                        // Add error event listener to show fallback when PNG fails
+                        statusPng.onerror = function() {
+                            this.style.display = 'none';
+                            const fallback = document.getElementById('connection-status');
+                            if (fallback) fallback.style.display = 'flex';
+                        };
+                    }
+                    
+                    // Always update the fallback as well (in case PNG fails)
+                    if (connectionText) {
+                        connectionText.textContent = isOnline ? '💚' : '❌';
+                    }
+                    if (statusIndicator) {
+                        statusIndicator.className = isOnline ? 'status-indicator online' : 'status-indicator offline';
+                    }
+                };
+            }
+            
+            // Handle button PNGs
+            const buttonContainers = document.querySelectorAll('.button-container');
+            
+            buttonContainers.forEach(container => {
+                const pngImg = container.querySelector('.btn-png');
+                const fallbackBtn = container.querySelector('.btn-fallback');
+                const buttonId = container.getAttribute('data-button-id');
+                
+                if (pngImg && fallbackBtn) {
+                    // Handle PNG image load success
+                    pngImg.addEventListener('load', function() {
+                        // Hide fallback button when PNG loads successfully
+                        fallbackBtn.style.display = 'none';
+                        pngImg.style.display = 'block';
+                        
+                        // Add click event to PNG image
+                        pngImg.addEventListener('click', function() {
+                            // Trigger the same event as the fallback button
+                            const clickEvent = new MouseEvent('click', {
+                                bubbles: true,
+                                cancelable: true,
+                                view: window
+                            });
+                            fallbackBtn.dispatchEvent(clickEvent);
+                        });
+                    });
+                    
+                    // Handle PNG image load error
+                    pngImg.addEventListener('error', function() {
+                        // Show fallback button when PNG fails to load
+                        this.style.display = 'none';
+                        fallbackBtn.style.display = 'flex';
+                    });
+                    
+                    // Check if image is already loaded
+                    if (pngImg.complete && pngImg.naturalHeight !== 0) {
+                        // PNG loaded successfully
+                        fallbackBtn.style.display = 'none';
+                        pngImg.style.display = 'block';
+                        
+                        // Add click event to PNG image
+                        pngImg.addEventListener('click', function() {
+                            const clickEvent = new MouseEvent('click', {
+                                bubbles: true,
+                                cancelable: true,
+                                view: window
+                            });
+                            fallbackBtn.dispatchEvent(clickEvent);
+                        });
+                    } else if (pngImg.complete) {
+                        // PNG failed to load
+                        pngImg.style.display = 'none';
+                        fallbackBtn.style.display = 'flex';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
